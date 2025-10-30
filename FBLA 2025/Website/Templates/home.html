@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{%block title%}AllyMarket{%endblock%}
+
+{%block content%}
+
+    <center>
+        <br>
+        <h1> Notes</h1>
+        <br>
+       <div class="container">
+  <div class="row">
+    {% for note in user.notes %}
+      <div class="col-md-4 mb-4">  <!-- 3 columns per row on medium+ screens -->
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <h2>{{ note.title }}</h2>
+            <p class="card-text">{{ note.data }} <br> <br> {{ note.date.strftime('%B %d, %Y') }}  </p>
+            <button class="btn btn-sm position-absolute top-0 end-0 m-2" onclick="toggleOptions('{{ note.id }}')">
+              &#x22EE; <!-- Unicode for vertical ellipsis (⋮) -->
+            </button>
+
+            <div id="note-options-{{ note.id }}" class="mt-3 d-none">
+              <button onclick="deleteNote('{{ note.id }}')" class="btn btn-danger btn-sm">Delete</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+       <form method="POST">  
+            
+            <textarea name="title" id="title" class="form-control" placeholder="Title" style="width: 300px; height: 40px;" ></textarea>
+            <br>
+            <textarea name="note" id="note" class="form-control" placeholder="Note" style="width: 400px";></textarea>
+            <br>
+            <div align = "center">
+                    
+                    <button type= "submit" class="btn btn-primary">Add note</button>
+            </div>
+        </form>
+    
+    </center>
+    {% endblock%}

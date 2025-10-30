@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{%block title%}AllyMarket{%endblock%}
+
+{%block content%}
+<form method="POST">
+  <h3>Select your account type:</h3>
+
+  <div class="user-type-selection">
+    <input type="radio" id="customer" name="UserType" value="Customer" required>
+    <label for="customer" class="user-type-btn">
+      <img src="{{ url_for('static', filename='assets/customer.jpg') }}" alt="Customer">
+      <span>Customer</span>
+    </label>
+
+    <input type="radio" id="owner" name="UserType" value="BusinessOwner" required>
+    <label for="owner" class="user-type-btn">
+      <img src="{{ url_for('static', filename='assets/business.jpg') }}" alt="Business Owner">
+      <span>Business Owner</span>
+    </label>
+  </div>
+
+  <div id="business-name-field" style="display:none; margin-top: 15px;">
+    <label for="BusinessName">Business Name:</label>
+    <input type="text" name="BusinessName" id="BusinessName" placeholder="Enter your business name">
+  </div>
+
+  <!-- Other signup fields -->
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="text" name="FirstName" placeholder="First Name" required>
+  <input type="password" name="password1" placeholder="Password" required>
+  <input type="password" name="password2" placeholder="Confirm Password" required>
+
+  <button type="submit" class="btn">Sign Up</button>
+</form>
+
+
+<script src="{{ url_for('static', filename='javascript/signup.js') }}"></script>
+
+
+{%endblock%}
