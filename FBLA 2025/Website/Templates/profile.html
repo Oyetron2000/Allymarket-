@@ -2,11 +2,40 @@
 {%block title%}AllyMarket{%endblock%}
 
 {%block content%}
+<div class="profile-container">
+  <h2>Welcome, {{ user.FirstName }}!</h2>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Account Type:</strong> {{ user.user_type }}</p>
 
-    <h1>AllyMarket</h1>
-    <center>
-        <br>
-        <h1> Profile</h1>
-        
-    </center>
+  {% if user.user_type == 'BusinessOwner' %}
+     {%if user.biz_added == false%}
+      <h1>Add your biz</h1>
+      <form method="POST">  
+            
+            <textarea name="biz_name" id="biz_name" class="form-control" placeholder="Business Name" style="width: 300px; height: 40px;" ></textarea>
+            <br>
+            <textarea name="biz_desc" id="biz_desc" class="form-control" placeholder="Description" style="width: 400px";></textarea>
+            <br>
+            <textarea name="biz_cat" id="biz_cat" class="form-control" placeholder="Business category" style="width: 300px; height: 40px;" ></textarea>
+            <br>
+            <div align = "center">
+                    
+                    <button type= "submit" class="btn btn-primary">Add Business</button>
+            </div>
+        </form>
+      {% endif %}
+
+      {%if user.biz_added == true%}
+    <div class="business-info">
+      <h3>Your Business</h3>
+      {% if user.business_name %}
+        <p><strong>Business Name:</strong> {{ user.business_name }}</p>
+      {% else %}
+        <p>No business name added yet.</p>
+      {% endif %}
+    </div>
+  {% endif %}
+  {% endif %}
+</div>
+    
     {% endblock%}
