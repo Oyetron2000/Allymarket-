@@ -9,14 +9,15 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150), nullable=False)
     notes = db.relationship('Note')
     tasks = db.relationship('Task')
-    user_type = db.Column(db.String(150), nullable=False)
+    biz_added = False
+    user_type = db.Column(db.String(150), nullable=False, default ='customer') 
+    
 
-class Journal(db.Model):
-    id = db.Column(db.Integer , primary_key = True)
-    title = db.Column(db.String(50))
-    note_count = db.column(db.Integer)
-    date = db.Column(db.DateTime(timezone = True), default = func.now())
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+class Business(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    biz_name = db.Column(db.String(100), unique=True, nullable = False)
+    description = db.Column(db.Text, nullable=True)
+    category = db.Column(db.String(100), nullable = False)
 
 
 class Note(db.Model):
@@ -34,7 +35,6 @@ class Task(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     status = db.Column(db.Boolean, default = False)
 
-class Project(db.Model):
-    status = db.Column(db.Float, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
 
