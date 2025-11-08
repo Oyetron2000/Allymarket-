@@ -1,13 +1,28 @@
 {% extends "base.html" %}
-{%block title%}AlleyMarket{%endblock%}
+{% block title %}AllyMarket{% endblock %}
 
-{%block content%}
-    
-    <center>
-        <br>
-        <h1>What is AlleyMarket?</h1>
-        <br>
-       <h3>AllyMarket is a site used to help discover and support small businesses!</h3>
-   
-    </center>
-    {% endblock%}
+{% block content %}
+<div class="about-wrapper">
+  <center>
+    <div class="card about-card">
+      <h1>What is <span class="highlight">AllyMarket</span>?</h1>
+
+      <p>
+        <strong>AllyMarket</strong> is an online platform, similar to Yelp or Facebook, that helps users connect with local businesses in their area. Our goal is to give small business owners the visibility they deserve while helping customers discover hidden gems in their community.
+      </p>
+
+      <p>
+        At AllyMarket, we believe local businesses are the <em>heart of our communities</em>. By providing a space for recognition, we empower these businesses to grow and thrive.
+      </p>
+
+      <p>
+        This project is currently in the prototype phase and is being developed as part of the <strong>FBLA Coding & Programming Competition</strong> by three dedicated high school students. We aim to add more features that enhance the user experience, making AllyMarket an essential tool for both business owners and customers.
+      </p>
+
+      <p class="signature">
+        <em>- Sincerely, the AllyMarket Team</em>
+      </p>
+    </div>
+  </center>
+</div>
+{% endblock %}
