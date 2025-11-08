@@ -41,7 +41,8 @@
         
         {% if user.is_authenticated %}
           <div class="right">
-            <a class="nav-item nav-link" id="tasks-link" href="/tasks">Tasks</a>
+            <a class="nav-item nav-link" id="about-link" href="/about">About</a>
+            <a class="nav-item nav-link" id="tasks-link" href="/">Home</a>
             <a class="nav-item nav-link" id="profile-link" href="/profile">Profile</a>
             <a class="nav-item nav-link" id="logout-link" href="/logout">Logout</a>
           </div>
@@ -54,6 +55,8 @@
         </div>
         {% endif %}
     </nav>
+    <br>
+    
     
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %} {% if category ==
