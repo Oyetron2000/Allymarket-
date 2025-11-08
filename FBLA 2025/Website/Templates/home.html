@@ -1,45 +1,62 @@
 {% extends "base.html" %}
-{%block title%}AllyMarket{%endblock%}
+{% block title %}Discover | AllyMarket{% endblock %}
 
-{%block content%}
+{% block content %}
+<div class="discover-wrapper">
+  <center>
+    <div class="biz-list">
+      <h1>Discover Local Businesses!</h1>
 
-    <center>
-        <br>
-        <h1> Notes</h1>
-        <br>
-       <div class="container">
-  <div class="row">
-    {% for note in user.notes %}
-      <div class="col-md-4 mb-4">  <!-- 3 columns per row on medium+ screens -->
-        <div class="card h-100 shadow-sm">
-          <div class="card-body d-flex flex-column justify-content-between">
-            <h2>{{ note.title }}</h2>
-            <p class="card-text">{{ note.data }} <br> <br> {{ note.date.strftime('%B %d, %Y') }}  </p>
-            <button class="btn btn-sm position-absolute top-0 end-0 m-2" onclick="toggleOptions('{{ note.id }}')">
-              &#x22EE; <!-- Unicode for vertical ellipsis (⋮) -->
-            </button>
+      <!-- 🔍 Search Bar -->
+      <form method="GET" action="{{ url_for('views.home') }}" class="search-form">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search businesses..."
+          value="{{ search_query or '' }}"
+          class="search-input"
+        >
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
 
-            <div id="note-options-{{ note.id }}" class="mt-3 d-none">
-              <button onclick="deleteNote('{{ note.id }}')" class="btn btn-danger btn-sm">Delete</button>
-            </div>
+      {% if search_query %}
+        <p class="muted">Showing results for "<strong>{{ search_query }}</strong>"</p>
+      {% endif %}
 
-          </div>
-        </div>
+      {% if businesses and businesses|length > 0 %}
+      <div class="biz-grid">
+  {% for b in businesses %}
+    <article class="card biz-card">
+      {% if b.image_file %}
+  <img
+    src="{{ url_for('static', filename='uploads/businesses/' + b.image_file) }}"
+    alt="{{ b.biz_name }}"
+    class="biz-image"
+  >
+{% endif %}
+      <div class="biz-card-head">
+        <h4>{{ b.biz_name }}</h4>
+        <span class="badge">{{ b.category }}</span>
       </div>
-    {% endfor %}
-  </div>
+      <p class="muted">{{ b.description }}</p>
+      {% if b.created_at %}
+        <div class="biz-card-foot">
+          Added {{ b.created_at.strftime('%b %d, %Y') }}
+        </div>
+      {% endif %}
+    </article>
+  {% endfor %}
 </div>
-       <form method="POST">  
-            
-            <textarea name="title" id="title" class="form-control" placeholder="Title" style="width: 300px; height: 40px;" ></textarea>
-            <br>
-            <textarea name="note" id="note" class="form-control" placeholder="Note" style="width: 400px";></textarea>
-            <br>
-            <div align = "center">
-                    
-                    <button type= "submit" class="btn btn-primary">Add note</button>
-            </div>
-        </form>
-    
-    </center>
-    {% endblock%}
+      {% else %}
+        <p class="muted">
+          {% if search_query %}
+            No businesses found matching "{{ search_query }}".
+          {% else %}
+            No businesses have been added yet.
+          {% endif %}
+        </p>
+      {% endif %}
+    </div>
+  </center>
+</div>
+{% endblock %}
