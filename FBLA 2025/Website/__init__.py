@@ -9,7 +9,7 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 DB_NAME = "database.db"
 def create_app():
-    app = Flask(__name__) 
+    app = Flask(__name__, static_folder='Static', template_folder='Templates')
     app.config['SECRET_KEY'] = '1 luv @ppl3s'
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads/profiles')
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
@@ -38,3 +38,4 @@ def create_app():
 def create_database(app):
     with app.app_context():
         db.create_all()
+
