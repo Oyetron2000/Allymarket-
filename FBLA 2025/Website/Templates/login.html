@@ -1,36 +1,134 @@
-<<<<<<< HEAD
 {% extends "base.html" %}
-{%block title%}AllyMarket{%endblock%}
+{% block title %}AllyMarket{% endblock %}
 
-{%block content%}
+{% block content %}
+<div class="profile-wrapper">
+  <div class="card profile-card">
+    <div class="profile-header">
+      <div class="profile-info">
+        <h2>Welcome, {{ user.FirstName }} 👋</h2>
+        <div class="profile-details">
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Account Type:</strong> {{ user.user_type }}</p>
 
-<form method = "POST">
-    <h3 align = "center">Log in</h3>
+          {% if not user.profile_image %}
+          <form method="POST" enctype="multipart/form-data" action="{{ url_for('views.profile') }}">
+            <label for="profile_image"><strong>Add Profile Picture</strong></label><br>
+            <input type="file" name="profile_image" accept="image/*" required>
+            <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Upload</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
 
-    <div class = "form-group">
-        <label for="email">Email Adress</label>
-        <input 
-        type="email" 
-        class="form-control"
-        id="email" 
-        name="email" 
-        placeholder="enter email"
-        />
+      {% if user.profile_image %}
+      <div class="profile-image-container">
+        <img
+          src="{{ url_for('static', filename='uploads/profiles/' + user.profile_image) }}"
+          alt="Profile Picture"
+          class="profile-image"
+        >
+      </div>
+      {% endif %}
     </div>
- 
-    <div class = "form-group">
-        <label for="password1">Password</label>
-        <input 
-        type="password" class="form-control"
-        id="password1" 
-        name="password1" 
-        placeholder="Enter password"
-        />
-    </div>
-    
-    <button type = "submit" class="btn btn-primary">Submit</button>
-</form>
-    
-{{ text }}
- {% endblock%}
+  </div>
+</div>
 
+{% if user.user_type == 'BusinessOwner' %}
+  {% if not businesses or businesses|length == 0 %}
+    <!-- Add Business Form -->
+    <div class="card add-business-card">
+      <h3>Add Your Business</h3>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-wrap">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" enctype="multipart/form-data" class="biz-form" action="{{ url_for('views.profile') }}" novalidate>
+        <input type="text" name="biz_name" placeholder="Business Name" required>
+        <textarea name="biz_desc" placeholder="Description" rows="4" required></textarea>
+
+        <div class="biz-category-group">
+          <label>Select a Business Category:</label>
+          <div class="category-options">
+            <input type="radio" id="food" name="biz_cat" value="Food & Beverage" required>
+            <label for="food" class="category-flair">Food & Beverage</label>
+
+            <input type="radio" id="retail" name="biz_cat" value="Retail">
+            <label for="retail" class="category-flair">Retail</label>
+
+            <input type="radio" id="services" name="biz_cat" value="Services">
+            <label for="services" class="category-flair">Services</label>
+
+            <input type="radio" id="health" name="biz_cat" value="Health & Wellness">
+            <label for="health" class="category-flair">Health & Wellness</label>
+
+            <input type="radio" id="arts" name="biz_cat" value="Arts & Crafts">
+            <label for="arts" class="category-flair">Arts & Crafts</label>
+          </div>
+        </div>
+
+        <div class="biz-image-upload">
+          <label for="biz_image"><strong>Add Business Image</strong></label><br>
+          <input type="file" name="biz_image" id="biz_image" accept="image/*" required>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Add Business</button>
+      </form>
+    </div>
+
+  {% else %}
+    <!-- Show Business -->
+    <div class="biz-list">
+      <h3>Your Business</h3>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-wrap">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="biz-grid">
+        {% for b in businesses %}
+          <article class="card biz-card">
+  <div class="biz-card-content">
+    <div class="biz-info">
+      <div class="biz-card-head">
+        <h4>{{ b.biz_name }}</h4>
+        <span class="badge">{{ b.category }}</span>
+      </div>
+      <p class="muted">{{ b.description }}</p>
+
+      {% if b.created_at %}
+        <div class="biz-card-foot">
+          Added {{ b.created_at.strftime('%b %d, %Y') }}
+        </div>
+      {% endif %}
+    </div>
+
+    {% if b.image_file %}
+      <div class="biz-image-wrap">
+        <img src="{{ url_for('static', filename='uploads/businesses/' + b.image_file) }}"
+             alt="{{ b.biz_name }}"
+             class="biz-image">
+      </div>
+    {% endif %}
+  </div>
+</article>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endif %}
+
+{% endblock %}
