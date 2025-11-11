@@ -11,7 +11,7 @@ def create_app():
     app = Flask(
         __name__,
         template_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Templates'),
-        static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Static')
+        static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
     )
 
     app.config['SECRET_KEY'] = '1 luv @ppl3s'
@@ -46,3 +46,4 @@ def create_app():
 def create_database(app):
     with app.app_context():
         db.create_all()
+
