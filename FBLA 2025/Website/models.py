@@ -52,7 +52,3 @@ class Task(db.Model):
     status = db.Column(db.Boolean, default = False)
 
 
-
-
-
-
