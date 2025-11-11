@@ -121,5 +121,3 @@ def delete_note():
         db.session.commit()
         flash('Note deleted', category='success')
 
-    return jsonify({})
-
