@@ -35,7 +35,13 @@ def signup():
             flash('Password needs to be longer', category='error')
         else:
             hashed_pw = generate_password_hash(password1, method='pbkdf2:sha256')
-            new_user = User(email=email, FirstName=FirstName, password=hashed_pw)
+            new_user = User(
+    email=email,
+    FirstName=FirstName,
+    password=hashed_pw,
+    user_type='business' if user_type == 'BusinessOwner' else 'customer'
+)
+
             db.session.add(new_user)
             db.session.commit()
 
@@ -72,3 +78,4 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
