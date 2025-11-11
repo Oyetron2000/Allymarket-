@@ -6,18 +6,18 @@
   <h3>Select your account type:</h3>
 
   <div class="user-type-selection">
-    <input type="radio" id="customer" name="UserType" value="Customer" required>
-    <label for="customer" class="user-type-btn">
-      <img src="{{ url_for('static', filename='assets/customer.jpg') }}" alt="Customer">
-      <span>Customer</span>
-    </label>
+  <input type="radio" id="customer" name="UserType" value="Customer" required>
+  <label for="customer" class="user-type-btn">
+    <img src="{{ url_for('static', filename='assets/customer.jpg') }}" alt="Customer">
+    <span>Customer</span>
+  </label>
 
-    <input type="radio" id="owner" name="UserType" value="BusinessOwner" required>
-    <label for="owner" class="user-type-btn">
-      <img src="{{ url_for('static', filename='assets/business.jpg') }}" alt="Business Owner">
-      <span>Business Owner</span>
-    </label>
-  </div>
+  <input type="radio" id="owner" name="UserType" value="BusinessOwner" required>
+  <label for="owner" class="user-type-btn">
+    <img src="{{ url_for('static', filename='assets/business.jpg') }}" alt="Business Owner">
+    <span>Business Owner</span>
+  </label>
+</div>
 
   
 
@@ -35,3 +35,4 @@
 
 
 {%endblock%}
+
