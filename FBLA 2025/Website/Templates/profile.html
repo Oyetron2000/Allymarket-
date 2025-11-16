@@ -51,12 +51,12 @@
       {% endwith %}
 
       <form method="POST" enctype="multipart/form-data" class="biz-form" action="{{ url_for('views.profile') }}" novalidate>
-        <input type="text" name="biz_name" placeholder="Business Name" required>
-        <textarea name="biz_desc" placeholder="Description" rows="4" required></textarea>
+    <input type="text" name="biz_name" placeholder="Business Name" required>
+    <textarea name="biz_desc" placeholder="Description" rows="4" required></textarea>
 
-        <div class="biz-category-group">
-          <label>Select a Business Category:</label>
-          <div class="category-options">
+    <div class="biz-category-group">
+        <label>Select a Business Category:</label>
+        <div class="category-options">
             <input type="radio" id="food" name="biz_cat" value="Food & Beverage" required>
             <label for="food" class="category-flair">Food & Beverage</label>
 
@@ -71,18 +71,41 @@
 
             <input type="radio" id="arts" name="biz_cat" value="Arts & Crafts">
             <label for="arts" class="category-flair">Arts & Crafts</label>
-          </div>
         </div>
-
-        <div class="biz-image-upload">
-          <label for="biz_image"><strong>Add Business Image</strong></label><br>
-          <input type="file" name="biz_image" id="biz_image" accept="image/*" required>
-        </div>
-
-        <button class="btn btn-primary" type="submit">Add Business</button>
-      </form>
     </div>
 
+    <!-- Contact info side by side -->
+    <div class="biz-contact-info" style="display: flex; gap: 10px;">
+        <div style="flex: 1;">
+            <label for="biz_phone"><strong>Phone</strong></label>
+            <input type="text" maxlength="10" name="biz_phone" id="biz_phone" placeholder="Phone" required>
+        </div>
+        <div style="flex: 1;">
+            <label for="biz_email"><strong>Email</strong></label>
+            <input type="email" name="biz_email" id="biz_email" placeholder="Email" required>
+        </div>
+    </div>
+
+    <!-- Location below -->
+    <div class="biz-location" style="margin-top: 10px;">
+        <label for="location"><strong>Location</strong></label>
+        <input type="text" name="location" id="location" placeholder="City, State or Address" required>
+    </div>
+
+    <!-- Website link (optional) -->
+    <div class="biz-website" style="margin-top: 10px;">
+        <label for="biz_site"><strong>Website (optional)</strong></label>
+        <input type="url" name="biz_site" id="biz_site" placeholder="https://example.com">
+    </div>
+
+    <!-- Business image upload -->
+    <div class="biz-image-upload" style="margin-top: 10px;">
+        <label for="biz_image"><strong>Add Business Image</strong></label>
+        <input type="file" name="biz_image" id="biz_image" accept="image/*">
+    </div>
+
+    <button class="btn btn-primary" type="submit" style="margin-top: 10px;">Add Business</button>
+</form>
   {% else %}
     <!-- Show Business -->
     <div class="biz-list">
@@ -130,5 +153,5 @@
     </div>
   {% endif %}
 {% endif %}
-{% endblock %}
 
+{% endblock %}
