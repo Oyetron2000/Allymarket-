@@ -26,26 +26,35 @@
       {% if businesses and businesses|length > 0 %}
       <div class="biz-grid">
   {% for b in businesses %}
+  <a href="{{ url_for('views.business_page', biz_id=b.id) }}" class="biz-card-link">
+
     <article class="card biz-card">
+
       {% if b.image_file %}
-  <img
-    src="{{ url_for('static', filename='uploads/businesses/' + b.image_file) }}"
-    alt="{{ b.biz_name }}"
-    class="biz-image"
-  >
-{% endif %}
+        <img
+          src="{{ url_for('static', filename='uploads/businesses/' + b.image_file) }}"
+          alt="{{ b.biz_name }}"
+          class="biz-image"
+        >
+      {% endif %}
+
       <div class="biz-card-head">
         <h4>{{ b.biz_name }}</h4>
         <span class="badge">{{ b.category }}</span>
       </div>
+
       <p class="muted">{{ b.description }}</p>
+
       {% if b.created_at %}
         <div class="biz-card-foot">
           Added {{ b.created_at.strftime('%b %d, %Y') }}
         </div>
       {% endif %}
+
     </article>
-  {% endfor %}
+
+  </a>
+{% endfor %}
 </div>
       {% else %}
         <p class="muted">
@@ -60,4 +69,3 @@
   </center>
 </div>
 {% endblock %}
-
