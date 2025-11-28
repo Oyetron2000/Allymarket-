@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="business-profile">
+
+  <h1>{{ business.biz_name }}</h1>
+
+  <div class="biz-header">
+    {% if business.image_file %}
+      <img src="{{ url_for('static', filename='images/' + business.image_file) }}" class="biz-image">
+    {% endif %}
+  </div>
+
+  <p><strong>Category:</strong> {{ business.category }}</p>
+  <p><strong>Description:</strong> {{ business.description }}</p>
+
+  {% if business.location %}
+  <p><strong>Location:</strong> {{ business.location }}</p>
+  {% endif %}
+
+  {% if business.biz_phone %}
+  <p><strong>Phone:</strong> {{ business.biz_phone }}</p>
+  {% endif %}
+
+  {% if business.biz_email %}
+  <p><strong>Email:</strong> {{ business.biz_email }}</p>
+  {% endif %}
+
+  {% if business.biz_site %}
+  <p><strong>Website:</strong> 
+    <a href="{{ business.biz_site }}" target="_blank">{{ business.biz_site }}</a>
+  </p>
+  {% endif %}
+
+  {% if user.is_authenticated and business.user_id == user.id %}
+    <a href="{{ url_for('views.business_page', biz_id=business.id) }}" class="btn btn-primary">
+      Edit Business
+    </a>
+  {% endif %}
+
+</div>
+
+{% endblock %}
