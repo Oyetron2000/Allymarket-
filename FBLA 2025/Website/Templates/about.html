@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% block title %}AllyMarket{% endblock %}
 
@@ -6,7 +5,7 @@
 <div class="about-wrapper">
   <center>
     <div class="card about-card">
-      <h1>What is <span class="highlight">AllyMarket</span>?</h1>
+      <h1><strong>What is <span class="highlight">AllyMarket</span>?</strong></h1>
 
       <p>
         <strong>AllyMarket</strong> is an online platform, similar to Yelp or Facebook, that helps users connect with local businesses in their area. Our goal is to give small business owners the visibility they deserve while helping customers discover hidden gems in their community.
@@ -23,7 +22,28 @@
       <p class="signature">
         <em>- Sincerely, the AllyMarket Team</em>
       </p>
-    </div>
+        </p>
+      <h1><strong>Meet the Team</strong></h1>
+      <div class="team-container" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; text-align: center;">
+        <div class="team-member"> 
+          <img src="{{ url_for('static', filename='assets/customer.jpg') }}" alt="Customer" style="height: 250px; border-radius: 25%;">
+          <h3>Oyetunde Ajayi</h3>
+          <p>Lead Developer</p>
+          <p>Description/Quote Space</p>
+        </div>
+        <div class="team-member">
+          <img src="{{ url_for('static', filename='assets/customer.jpg') }}" alt="Customer" style="height: 250px; border-radius: 25%;">
+          <h3>Dylan Carballo</h3>
+          <p>Backend & Database Specialist</p>
+          <p>Description/Quote Space</p>
+        </div>
+        <div class="team-member">
+          <img src="{{ url_for('static', filename='assets/customer.jpg') }}" alt="Customer" style="height: 250px; border-radius: 25%;">
+          <h3>Alejandro Nunez</h3>
+          <p>Frontend Developer & UI Designer</p>
+          <p>Description/Quote Space</p>
+        </div>
+      </div>
   </center>
 </div>
 {% endblock %}
