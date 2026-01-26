@@ -2,33 +2,34 @@
 {%block title%}AllyMarket{%endblock%}
 
 {%block content%}
-
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+<div class="login-card" style="width: 1000px; padding: 40px;">
 <form method = "POST">
-    <h3 align = "center">Log in</h3>
-
+    <h1><strong><span class="highlight">Login</span> to Your Account!</strong></h1>
+    <hr>
     <div class = "form-group">
-        <label for="email">Email Adress</label>
-        <input 
-        type="email" 
-        class="form-control"
-        id="email" 
-        name="email" 
-        placeholder="enter email"
-        />
-    </div>
+    <label for="email">Email Address</label>
+    <input 
+    type="email" 
+    class="form-control"
+    id="email" 
+    name="email" 
+    placeholder="Enter Email"
+    />
+        </div>
  
     <div class = "form-group">
-        <label for="password1">Password</label>
-        <input 
-        type="password" class="form-control"
-        id="password1" 
-        name="password1" 
-        placeholder="Enter password"
-        />
-    </div>
+    <label for="password1">Password</label>
+    <input 
+    type="password" class="form-control"
+    id="password1" 
+    name="password1" 
+    placeholder="Enter password"
+    />
+        </div>
 
     <button type = "submit" class="btn btn-primary">Submit</button>
 </form>
-
-{{ text }}
+</div>
+</div>
  {% endblock%}
