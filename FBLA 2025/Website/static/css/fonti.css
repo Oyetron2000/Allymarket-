@@ -1,10 +1,10 @@
-* ===========================
+/* ===========================
    AllyMarket Base Styles (optimized)
    =========================== */
 
 /* --- Color Palette Variables --- */
 :root {
-  --text-color: #000000;
+   --text-color: #000000;
   --link-color: #2563eb;
   --primary-color: #00bfa6; /* Teal Accent */
   --primary-light: #3b82f6; /* Light Blue */
