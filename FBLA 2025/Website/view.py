@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app, redirect, render_template, request, flash, jsonify, url_for
 from flask_login import login_user, login_required, logout_user, current_user
-from .models import Note, Task, User, Business
+from .models import Note, Review, Task, User, Business, Review
 from Website import db
 from werkzeug.utils import secure_filename
 import os
@@ -12,6 +12,21 @@ views = Blueprint('views', __name__, template_folder='Templates')
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_business_image(file):
+    """
+    Saves an uploaded business image to the static/uploads/business folder.
+    Returns the filename to store in the database.
+    """
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        upload_folder = os.path.join(current_app.root_path, 'static/uploads/business')
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+        file_path = os.path.join(upload_folder, filename)
+        file.save(file_path)
+        return filename
+    return None
 
 @views.route('/about')
 def about():
@@ -47,6 +62,10 @@ def profile():
         biz_name = (request.form.get('biz_name') or '').strip()
         biz_desc = (request.form.get('biz_desc') or '').strip()
         biz_cat  = (request.form.get('biz_cat') or '').strip()
+        biz_phone = (request.form.get('biz_phone') or '').strip()
+        biz_email = (request.form.get('biz_email') or '').strip()
+        location = (request.form.get('location') or '').strip()
+        biz_site = (request.form.get('biz_site') or '').strip()
         biz_image = request.files.get('biz_image')
 
         errors = []
@@ -87,27 +106,11 @@ def profile():
 
 
 @views.route('/', methods=['GET', 'POST'])
-@login_required
 def home():
     businesses = Business.query.order_by(Business.created_at.desc()).all()
     return render_template('home.html', user=current_user, businesses=businesses)
 
-@views.route('/tasks', methods=['GET', 'POST'])
-@login_required
-def tasks():
-    search_query = request.args.get('q', '').strip()
 
-    if search_query:
-        # Filter by name, description, or category (case-insensitive)
-        businesses = Business.query.filter(
-            (Business.biz_name.ilike(f"%{search_query}%")) |
-            (Business.description.ilike(f"%{search_query}%")) |
-            (Business.category.ilike(f"%{search_query}%"))
-        ).order_by(Business.created_at.desc()).all()
-    else:
-        businesses = Business.query.order_by(Business.created_at.desc()).all()
-
-    return render_template('discover.html', user=current_user, businesses=businesses, search_query=search_query)
 
 
 @views.route('/delete-note', methods=['POST'])
@@ -121,3 +124,45 @@ def delete_note():
         db.session.commit()
         flash('Note deleted', category='success')
 
+
+
+@views.route("/business/<int:biz_id>/review", methods=["POST"])
+@login_required
+def add_review(biz_id):
+    business = Business.query.get_or_404(biz_id)
+
+    # 🚫 Business owners cannot review their own business
+    if current_user.id == business.owner_id:
+        flash("You cannot review your own business.", "danger")
+        return redirect(url_for("views.business_page", biz_id=biz_id))
+
+    rating = int(request.form.get("rating"))
+    content = request.form.get("content")
+
+    if rating < 1 or rating > 5:
+        flash("Invalid rating.", "danger")
+        return redirect(url_for("views.business_page", biz_id=biz_id))
+
+    review = Review(
+        rating=rating,
+        content=content,
+        user_id=current_user.id,
+        business_id=biz_id
+    )
+
+    db.session.add(review)
+    db.session.commit()
+
+    flash("Review submitted!", "success")
+    return redirect(url_for("views.business_page", biz_id=biz_id))
+
+    flash("Review submitted!", "success")
+    return redirect(url_for('views.business_page', biz_id=biz_id))
+
+#gets the business id for the business page
+@views.route('/business/<int:biz_id>')
+def business_page(biz_id):
+    business = Business.query.get_or_404(biz_id)
+    reviews = Review.query.filter_by(business_id=biz_id).order_by(Review.created_at.desc()).all()
+
+    return render_template("business_page.html", business=business, user=current_user, reviews=reviews)
