@@ -1,6 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div> <h1>Business name</h1></div>
+
+
+
+<div class="page-container">
+
+  <!-- BUSINESS CARD / HEADER -->
+  <article class="card biz-card">
+
+    {% if business.image_file %}
+      <img
+        src="{{ url_for('static', filename='uploads/businesses/' + business.image_file) }}"
+        alt="{{ business.biz_name }}"
+        class="biz-image"
+      >
+    {% endif %}
+
+    <div class="biz-card-head">
+      <h2>{{ business.biz_name }}</h2>
+      <span class="badge">{{ business.category }}</span>
+    </div>
+
+    <p class="muted">{{ business.description }}</p>
+
+    {% if business.created_at %}
+      <div class="biz-card-foot">
+        Added {{ business.created_at.strftime('%b %d, %Y') }} ·
+        {{ business.biz_location }}
+      </div>
+    {% endif %}
+
+  </article>
+
+</div>
+
+
+<div> <h1>Bar with: Add Rating, Save, & Save buttons</h1></div>
+
 <div class="business-profile" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 100px); padding: 20px;">
   <div class="card" style="width: 100%; max-width: 800px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     
@@ -62,16 +100,16 @@
           <strong>Owner:</strong> {{ business.owner.FirstName if business.owner else 'Unknown' }}
         </li>
         <li style="padding: 8px 0; color: #555;">
-          <strong>Location:</strong> {{ business.location if business.location else 'N/A' }}
+          <strong>Address:</strong>  location var required 😡
         </li>
         <li style="padding: 8px 0; color: #555;">
-          <strong>Phone:</strong> {{ business.biz_phone if business.biz_phone else 'N/A' }}
+            <strong>Phone:</strong>  phone var required 😡
         </li>
         <li style="padding: 8px 0; color: #555;">
-          <strong>Email:</strong> {{ business.biz_email if business.biz_email else 'N/A' }}
+            <strong>Email:</strong>  email var required 😡
         </li>
         <li style="padding: 8px 0; color: #555;">
-          <strong>Website:</strong> {{ business.biz_website if business.biz_website else 'N/A' }}
+            <strong>Website:</strong> website var required 😡 
         </li>
         <li style="padding: 8px 0; color: #555;">
           <strong>Created:</strong> {{ business.created_at.strftime('%B %d, %Y at %I:%M %p') if business.created_at else 'N/A' }}
@@ -91,4 +129,53 @@
   </div>
 </div>
 
+<div>
+
+  <h1> Reviews</h1>
+<h3>Leave a Review</h3>
+
+{% if current_user.is_authenticated and business.user_id != user.id %}
+  <form method="POST" action="{{ url_for('views.add_review', biz_id=business.id) }}">
+
+    <label for="rating">Rating</label>
+    <select name="rating" required>
+      <option value="">Select</option>
+      {% for i in range(1, 6) %}
+        <option value="{{ i }}">{{ i }} ★</option>
+      {% endfor %}
+    </select>
+
+    <textarea
+      name="content"
+      placeholder="Write your review..."
+      required
+    ></textarea>
+
+    <button type="submit">Submit Review</button>
+  </form>
+{% else %}
+  <p class="muted">Log in to leave a review.</p>
+{% endif %}
+</div>
+
+<h3>Customer Reviews</h3>
+
+{% if reviews and reviews|length > 0 %}
+  {% for r in reviews %}
+    <div class="card review-card">
+      <strong>{{ r.user.username }}</strong>
+      <span>
+        {% for i in range(r.rating) %}★{% endfor %}
+      </span>
+
+      <p>{{ r.content }}</p>
+
+      <small class="muted">
+        {{ r.created_at.strftime('%b %d, %Y') }}
+      </small>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="muted">No reviews yet.</p>
+{% endif %}
 {% endblock %}
