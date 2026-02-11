@@ -8,6 +8,7 @@
       <div class="profile-info">
         <h2>Welcome, {{ user.FirstName }} 👋</h2>
         <div class="profile-details">
+          <p></p>
           <p><strong>Email:</strong> {{ user.email }}</p>
           <p><strong>Account Type:</strong> {{ user.user_type }}</p>
 
@@ -35,123 +36,203 @@
 </div>
 
 {% if user.user_type == 'BusinessOwner' %}
-  {% if not businesses or businesses|length == 0 %}
-    <!-- Add Business Form -->
-    <div class="card add-business-card">
-      <h3>Add Your Business</h3>
+  <div id="biz-area">
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <div class="flash-wrap">
-            {% for category, message in messages %}
-              <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-
-      <form method="POST" enctype="multipart/form-data" class="biz-form" action="{{ url_for('views.profile') }}" novalidate>
-    <input type="text" name="biz_name" placeholder="Business Name" required>
-    <textarea name="biz_desc" placeholder="Description" rows="4" required></textarea>
-
-    <div class="biz-category-group">
-        <label>Select a Business Category:</label>
-        <div class="category-options">
-            <input type="radio" id="food" name="biz_cat" value="Food & Beverage" required>
-            <label for="food" class="category-flair">Food & Beverage</label>
-
-            <input type="radio" id="retail" name="biz_cat" value="Retail">
-            <label for="retail" class="category-flair">Retail</label>
-
-            <input type="radio" id="services" name="biz_cat" value="Services">
-            <label for="services" class="category-flair">Services</label>
-
-            <input type="radio" id="health" name="biz_cat" value="Health & Wellness">
-            <label for="health" class="category-flair">Health & Wellness</label>
-
-            <input type="radio" id="arts" name="biz_cat" value="Arts & Crafts">
-            <label for="arts" class="category-flair">Arts & Crafts</label>
-        </div>
-    </div>
-
-    <!-- Contact info side by side -->
-    <div class="biz-contact-info" style="display: flex; gap: 10px;">
-        <div style="flex: 1;">
-            <label for="biz_phone"><strong>Phone</strong></label>
-            <input type="text" maxlength="10" name="biz_phone" id="biz_phone" placeholder="Phone" required>
-        </div>
-        <div style="flex: 1;">
-            <label for="biz_email"><strong>Email</strong></label>
-            <input type="email" name="biz_email" id="biz_email" placeholder="Email" required>
-        </div>
-    </div>
-
-    <!-- Location below -->
-    <div class="biz-location" style="margin-top: 10px;">
-        <label for="location"><strong>Location</strong></label>
-        <input type="text" name="location" id="location" placeholder="City, State or Address" required>
-    </div>
-
-    <!-- Website link (optional) -->
-    <div class="biz-website" style="margin-top: 10px;">
-        <label for="biz_site"><strong>Website (optional)</strong></label>
-        <input type="url" name="biz_site" id="biz_site" placeholder="https://example.com">
-    </div>
-
-    <!-- Business image upload -->
-    <div class="biz-image-upload" style="margin-top: 10px;">
-        <label for="biz_image"><strong>Add Business Image</strong></label>
-        <input type="file" name="biz_image" id="biz_image" accept="image/*">
-    </div>
-
-    <button class="btn btn-primary" type="submit" style="margin-top: 10px;">Add Business</button>
-</form>
-  {% else %}
-    <!-- Show Business -->
-    <div class="biz-list">
-      <h3>Your Business</h3>
-
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <div class="flash-wrap">
-            {% for category, message in messages %}
-              <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-
-      <div class="biz-grid">
-        {% for b in businesses %}
-          <article class="card biz-card">
-  <div class="biz-card-content">
-    <div class="biz-info">
-      <div class="biz-card-head">
-        <h4>{{ b.biz_name }}</h4>
-        <span class="badge">{{ b.category }}</span>
-      </div>
-      <p class="muted">{{ b.description }}</p>
-
-      {% if b.created_at %}
-        <div class="biz-card-foot">
-          Added {{ b.created_at.strftime('%b %d, %Y') }}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-wrap">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
         </div>
       {% endif %}
+    {% endwith %}
+
+    <!-- Add Business Form (hidden until the button is pressed) -->
+    <div id="add-business-section" class="card add-business-card" style="display: none;">
+      <h2>Add Your Business</h2>
+
+      <!-- Progress bar -->
+      <div class="biz-progress" style="margin-bottom: 12px;">
+        <div id="biz-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="display:flex;flex-direction:column;gap:6px;">
+          <div class="progress-bar-wrapper" style="background:#e6e6e6;border-radius:8px;overflow:hidden;height:12px;">
+            <div id="biz-progress-fill" style="width:0%;height:100%;background:#00bfa6;transition:width 0.3s ease;"></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);"><span id="biz-progress-text">0%</span> complete</div>
+        </div>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" class="biz-form" action="{{ url_for('views.profile') }}" novalidate>
+        <input type="text" name="biz_name" placeholder="Business Name" required>
+        <textarea name="biz_desc" placeholder="Description" rows="4" required></textarea>
+
+        <div class="biz-category-group">
+            <label>Select a Business Category:</label>
+            <div class="category-options">
+                <input type="radio" id="food" name="biz_cat" value="Food & Beverage" required>
+                <label for="food" class="category-flair">Food & Beverage</label>
+
+                <input type="radio" id="retail" name="biz_cat" value="Retail">
+                <label for="retail" class="category-flair">Retail</label>
+
+                <input type="radio" id="services" name="biz_cat" value="Services">
+                <label for="services" class="category-flair">Services</label>
+
+                <input type="radio" id="health" name="biz_cat" value="Health & Wellness">
+                <label for="health" class="category-flair">Health & Wellness</label>
+
+                <input type="radio" id="arts" name="biz_cat" value="Arts & Crafts">
+                <label for="arts" class="category-flair">Arts & Crafts</label>
+            </div>
+        </div>
+
+        <!-- Contact info side by side -->
+        <div class="biz-contact-info" style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label for="biz_phone"><strong>Phone</strong></label>
+                <input type="text" maxlength="10" name="biz_phone" id="biz_phone" placeholder="Phone" required>
+            </div>
+            <div style="flex: 1;">
+                <label for="biz_email"><strong>Email</strong></label>
+                <input type="email" name="biz_email" id="biz_email" placeholder="Email" required>
+            </div>
+        </div>
+
+        <!-- Location below -->
+        <div class="biz-location" style="margin-top: 10px;">
+            <label for="biz_location"><strong>Location</strong></label>
+            <input type="text" name="biz_location" id="biz_location" placeholder="City, State or Address" required>
+        </div>
+
+        <!-- Website link (optional) -->
+        <div class="biz-website" style="margin-top: 10px;">
+            <label for="biz_site"><strong>Website (optional)</strong></label>
+            <input type="url" name="biz_site" id="biz_site" placeholder="https://example.com">
+        </div>
+
+        <!-- Business image upload -->
+        <div class="biz-image-upload" style="margin-top: 10px;">
+            <label for="biz_image"><strong>Add Business Image</strong></label>
+            <input type="file" name="biz_image" id="biz_image" accept="image/*">
+        </div>
+
+        <button id="submit-add-biz" class="btn btn-primary" type="submit" style="margin-top: 10px;">Add Business</button>
+      </form>
     </div>
 
-    {% if b.image_file %}
-      <div class="biz-image-wrap">
-        <img src="{{ url_for('static', filename='uploads/businesses/' + b.image_file) }}"
-             alt="{{ b.biz_name }}"
-             class="biz-image">
+    <div style="margin: 12px 0; display: flex; gap: 12px; align-items: center;">
+      <button id="toggle-add-biz" class="btn btn-secondary" data-original="{{ 'Add a Business' if businesses and businesses|length > 0 else 'Add Business' }}">{{ 'Add a Business' if businesses and businesses|length > 0 else 'Add Business' }}</button>
+    </div>
+
+    {% if businesses and businesses|length > 0 %}
+
+      <!-- Show Business -->
+      <div class="biz-list">
+        <div class="card" style="width: 100%; padding: 20px; box-shadow: 0 4px 6px 00bfa6(0, 0, 0, 0.1); background-color: #00bfa6; color: var(--light);">
+          <h3>Your businesses:</h3>
+        </div>
+
+        <div class="biz-grid">
+          {% for b in businesses %}
+            <article class="card biz-card">
+      <div class="biz-card-content">
+            <div class="biz-image-container" style="display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+          {% if b.image_file %}
+          <div class="biz-image-wrap">
+            <img src="{{ url_for('static', filename='uploads/businesses/' + b.image_file) }}"
+               alt="{{ b.biz_name }}"
+               class="biz-image">
+          </div>
+          {% endif %}
+        </div>
+        <div class="biz-info">
+          <div class="biz-card-head" style="font-size: 30px; font-weight: 600; -webkit-text-fill-color: #00bfa6;">
+            <h3>{{ b.biz_name }}</h3>
+            <span class="badge">{{ b.category }}</span>
+          </div>
+          <p class="muted">{{ b.description }}</p>
+
+          {% if b.created_at %}
+            <div class="biz-card-foot">
+              Added {{ b.created_at.strftime('%b %d, %Y') }}
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </article>
+          {% endfor %}
+        </div>
       </div>
     {% endif %}
-  </div>
-</article>
-        {% endfor %}
-      </div>
-    </div>
-  {% endif %}
-{% endif %}
 
+  </div>
+
+  <script>
+    (function() {
+      var toggleBtn = document.getElementById('toggle-add-biz');
+      var addSection = document.getElementById('add-business-section');
+      var form = addSection ? addSection.querySelector('form.biz-form') : null;
+      var progressFill = document.getElementById('biz-progress-fill');
+      var progressText = document.getElementById('biz-progress-text');
+      var progressRoot = document.getElementById('biz-progress');
+
+      if (!toggleBtn || !addSection || !form || !progressFill || !progressText) return;
+
+      // fields we consider required for progress
+      var requiredChecks = {
+        name: function() { var el = form.querySelector('input[name="biz_name"]'); return el && el.value.trim().length > 0; },
+        desc: function() { var el = form.querySelector('textarea[name="biz_desc"]'); return el && el.value.trim().length > 0; },
+        cat: function() { var els = form.querySelectorAll('input[name="biz_cat"]'); return Array.prototype.some.call(els, function(r){ return r.checked; }); },
+        phone: function() { var el = form.querySelector('input[name="biz_phone"]'); return el && el.value.trim().length > 0; },
+        email: function() { var el = form.querySelector('input[name="biz_email"]'); var v = el && el.value.trim(); return v && v.indexOf('@') > -1; },
+        location: function() { var el = form.querySelector('input[name="location"]'); return el && el.value.trim().length > 0; }
+      };
+
+      function updateProgress() {
+        var total = Object.keys(requiredChecks).length;
+        var filled = 0;
+        Object.keys(requiredChecks).forEach(function(k){ if (requiredChecks[k]()) filled++; });
+        var pct = Math.round((filled / total) * 100);
+        progressFill.style.width = pct + '%';
+        progressText.textContent = pct + '%';
+        if (progressRoot) progressRoot.setAttribute('aria-valuenow', pct);
+      }
+
+      // attach listeners
+      form.addEventListener('input', updateProgress);
+      form.addEventListener('change', updateProgress);
+
+      // ensure progress updates when form is shown
+      toggleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var isHidden = addSection.style.display === 'none';
+        // store original label so we can revert when hiding
+        var originalLabel = toggleBtn.getAttribute('data-original') || toggleBtn.textContent;
+        toggleBtn.setAttribute('data-original', originalLabel);
+        addSection.style.display = isHidden ? '' : 'none';
+        toggleBtn.textContent = isHidden ? 'Cancel' : originalLabel;
+        if (isHidden) {
+          // scroll the form into view and focus the name field
+          addSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          var firstInput = addSection.querySelector('input[name="biz_name"]');
+          if (firstInput) firstInput.focus();
+          // update progress immediately
+          updateProgress();
+        }
+      });
+
+      // reset progress if form submitted (server will usually redirect)
+      form.addEventListener('submit', function(){
+        progressFill.style.width = '0%';
+        progressText.textContent = '0%';
+        if (progressRoot) progressRoot.setAttribute('aria-valuenow', 0);
+      });
+
+      // initialize once (in case form was pre-filled)
+      updateProgress();
+
+    })();
+  </script>
+{% endif %}
 {% endblock %}
