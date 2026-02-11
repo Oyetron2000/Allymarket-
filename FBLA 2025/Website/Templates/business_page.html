@@ -1,43 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div> <h1>Business name</h1></div>
-
-
-
-<div class="page-container">
-
-  <!-- BUSINESS CARD / HEADER -->
-  <article class="card biz-card">
-
-    {% if business.image_file %}
-      <img
-        src="{{ url_for('static', filename='uploads/businesses/' + business.image_file) }}"
-        alt="{{ business.biz_name }}"
-        class="biz-image"
-      >
-    {% endif %}
-
-    <div class="biz-card-head">
-      <h2>{{ business.biz_name }}</h2>
-      <span class="badge">{{ business.category }}</span>
-    </div>
-
-    <p class="muted">{{ business.description }}</p>
-
-    {% if business.created_at %}
-      <div class="biz-card-foot">
-        Added {{ business.created_at.strftime('%b %d, %Y') }} ·
-        {{ business.biz_location }}
-      </div>
-    {% endif %}
-
-  </article>
-
-</div>
-
-
-<div> <h1>Bar with: Add Rating, Save, & Save buttons</h1></div>
 
 <div class="business-profile" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 100px); padding: 20px;">
   <div class="card" style="width: 100%; max-width: 800px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -72,8 +35,7 @@
       <!-- Category -->
       <div style="margin-bottom: 15px;">
         <p style="margin: 0 0 5px 0; color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Category</p>
-        <p style="margin: 0; font-size: 16px; font-weight: 500; color: #333;">
-          {{ business.category }}
+      <span class="badge", style="font-size: 22px;">{{ business.category }}</span>
         </p>
       </div>
 
@@ -100,16 +62,16 @@
           <strong>Owner:</strong> {{ business.owner.FirstName if business.owner else 'Unknown' }}
         </li>
         <li style="padding: 8px 0; color: #555;">
-          <strong>Address:</strong>  location var required 😡
+          <strong>Address:</strong>  {{ business.location }}
         </li>
         <li style="padding: 8px 0; color: #555;">
-            <strong>Phone:</strong>  phone var required 😡
+            <strong>Phone:</strong> {{ business.biz_phone }}
         </li>
         <li style="padding: 8px 0; color: #555;">
-            <strong>Email:</strong>  email var required 😡
+            <strong>Email:</strong> {{ business.biz_email }}
         </li>
         <li style="padding: 8px 0; color: #555;">
-            <strong>Website:</strong> website var required 😡 
+            <strong>Website:</strong> {{ business.biz_site }}
         </li>
         <li style="padding: 8px 0; color: #555;">
           <strong>Created:</strong> {{ business.created_at.strftime('%B %d, %Y at %I:%M %p') if business.created_at else 'N/A' }}
@@ -120,62 +82,115 @@
     <!-- Edit Button (visible only to owner) -->
     {% if user.is_authenticated and business.user_id == user.id %}
     <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e0e0e0;">
-      <a href="{{ url_for('views.business_page', biz_id=business.id) }}" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: 500;">
+      <a href="{{ url_for('views.business_page', biz_id=business.id) }}" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background-color: var(--primary-color); color: white; text-decoration: none; border-radius: 4px; font-weight: 500;">
         ✎ Edit Business
       </a>
     </div>
     {% endif %}
 
+  <div style="margin-top: 30px">
+    <button id="open-reviews-btn" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background-color: var(--primary-color); color: white; text-decoration: none; border-radius: 4px; font-weight: 500">
+      ✪ Open Reviews
+    </button>
+    </div>
+    <div style="margin-top: 30px">
+      <button id="open-gallery-btn" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background-color: var(--primary-color); color: white; text-decoration: none; border-radius: 4px; font-weight: 500">
+      🖾 View Maps
+      </button>
+    </div>
+
+<style>
+  .business-profile { transition: transform 300ms ease; }
+  .business-profile.shift-left { transform: translateX(-25vw); }
+  .reviews-panel { width:50vw; max-width:90vw; background:#fff; box-shadow: -4px 0 12px rgba(0,0,0,0.08); position:fixed; right:0; top:80px; bottom:40px; transform: translateX(100%); transition: transform 300ms ease; overflow:auto; padding:20px; z-index:1200; border-left:1px solid #eee; }
+  .reviews-panel.open { transform: translateX(0); }
+  @media (max-width:900px){ .business-profile.shift-left { transform: translateX(-100vw); } .reviews-panel{ width:100vw; } }
+</style>
+
   </div>
 </div>
 
-<div>
+<!-- Sliding Reviews Panel (initially hidden) -->
+<aside id="reviews-panel" class="reviews-panel" aria-hidden="true">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <h3 style="margin:0;">Customer Reviews</h3>
+    <button id="close-reviews-btn" style="background:transparent; border:none; font-size:18px; cursor:pointer;">✕</button>
+  </div>
 
-  <h1> Reviews</h1>
-<h3>Leave a Review</h3>
+  <!-- Review form inside panel -->
+  <div style="margin-bottom:12px;">
+    {% if current_user.is_authenticated and business.user_id != user.id %}
+      <form method="POST" action="{{ url_for('views.add_review', biz_id=business.id) }}">
+        <label for="panel-rating" style="display:block; margin-bottom:6px; font-weight:600;">Rating</label>
+        <select id="panel-rating" name="rating" required style="width:100%; padding:8px; margin-bottom:8px;">
+          <option value="">Select</option>
+          {% for i in range(1, 6) %}
+            <option value="{{ i }}">{{ i }} ★</option>
+          {% endfor %}
+        </select>
 
-{% if current_user.is_authenticated and business.user_id != user.id %}
-  <form method="POST" action="{{ url_for('views.add_review', biz_id=business.id) }}">
+        <label for="panel-content" style="display:block; margin-bottom:6px; font-weight:600;">Review</label>
+        <textarea id="panel-content" name="content" placeholder="Write your review..." required style="width:100%; min-height:100px; padding:8px; margin-bottom:8px;"></textarea>
 
-    <label for="rating">Rating</label>
-    <select name="rating" required>
-      <option value="">Select</option>
-      {% for i in range(1, 6) %}
-        <option value="{{ i }}">{{ i }} ★</option>
+        <button type="submit" style="background:#007bff; color:#fff; border:none; padding:10px 14px; border-radius:6px; cursor:pointer;">Submit Review</button>
+      </form>
+    {% elif current_user.is_authenticated and business.user_id == user.id %}
+      <p class="muted">⚠️ You cannot review your own business.</p>
+    {% else %}
+      <p class="muted">🪵 Log in to leave a review.</p> <!--haha get it-->
+    {% endif %}
+  </div>
+
+  <hr style="border:none; border-top:1px solid #f0f0f0; margin:10px 0 14px 0;" />
+
+  <div id="reviews-content">
+    {% if reviews and reviews|length > 0 %}
+      {% for r in reviews %}
+        <div style="padding:12px; border-bottom:1px solid #f0f0f0;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            {% if r.user.profile_image %}
+              <img src="{{ url_for('static', filename='uploads/profiles/' + r.user.profile_image) }}" alt="{{ r.user.FirstName }}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+            {% else %}
+              <div style="width:40px; height:40px; border-radius:50%; background-color:var(--primary-color); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;">{{ r.user.FirstName[0] }}</div>
+            {% endif %}
+            <strong>{{ r.user.FirstName }}</strong>
+          </div>
+          <div style="margin-bottom:6px;">{% for i in range(r.rating) %}★{% endfor %}</div>
+          <p style="margin:0 0 6px 0; color:#444;">{{ r.content }}</p>
+          <small class="muted" style="color:#999;">{{ r.created_at.strftime('%b %d, %Y') }}</small>
+        </div>
       {% endfor %}
-    </select>
+    {% else %}
+      <p class="muted">No reviews yet.</p>
+    {% endif %}
+  </div>
+</aside>
 
-    <textarea
-      name="content"
-      placeholder="Write your review..."
-      required
-    ></textarea>
+<!-- removed duplicate inline review form (now inside the sliding reviews panel) -->
+<!-- Reviews are displayed inside the sliding panel -->
+<script>
+  (function(){
+    const openBtn = document.getElementById('open-reviews-btn');
+    const closeBtn = document.getElementById('close-reviews-btn');
+    const panel = document.getElementById('reviews-panel');
+    const main = document.querySelector('.business-profile');
 
-    <button type="submit">Submit Review</button>
-  </form>
-{% else %}
-  <p class="muted">Log in to leave a review.</p>
-{% endif %}
-</div>
+    function openPanel(){
+      panel.classList.add('open');
+      panel.setAttribute('aria-hidden','false');
+      if(main) main.classList.add('shift-left');
+    }
+    function closePanel(){
+      panel.classList.remove('open');
+      panel.setAttribute('aria-hidden','true');
+      if(main) main.classList.remove('shift-left');
+    }
 
-<h3>Customer Reviews</h3>
+    if(openBtn) openBtn.addEventListener('click', openPanel);
+    if(closeBtn) closeBtn.addEventListener('click', closePanel);
 
-{% if reviews and reviews|length > 0 %}
-  {% for r in reviews %}
-    <div class="card review-card">
-      <strong>{{ r.user.username }}</strong>
-      <span>
-        {% for i in range(r.rating) %}★{% endfor %}
-      </span>
-
-      <p>{{ r.content }}</p>
-
-      <small class="muted">
-        {{ r.created_at.strftime('%b %d, %Y') }}
-      </small>
-    </div>
-  {% endfor %}
-{% else %}
-  <p class="muted">No reviews yet.</p>
-{% endif %}
+    // close panel on Escape
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closePanel(); });
+  })();
+</script>
 {% endblock %}
