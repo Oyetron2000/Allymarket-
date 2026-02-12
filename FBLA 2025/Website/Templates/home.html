@@ -5,7 +5,7 @@
 <div class="discover-wrapper">
   <center>
     <div class="biz-list">
-      <h1>Discover Local Businesses!</h1>
+      <h1>Discover Local Businesses!</h1> <!-- Motto -->
 
       <!-- 🔍 Search Bar -->
       <form method="GET" action="{{ url_for('views.home') }}" class="search-form">
@@ -35,6 +35,9 @@
          alt="{{ b.biz_name }}"
          class="biz-image">
       </div>
+        {% else %}
+        <div class="biz-placeholder"> <!-- Placeholder icon for businesses without images -->
+          <span class="placeholder-icon" style="font-size: 100pt;">🏬</span> 
       {% endif %}
 
       <div class="biz-card-head">
@@ -42,11 +45,11 @@
       <span class="badge">{{ b.category }}</span>
       </div>
 
-      insert location
+      insert location <!-- TODO -->
 
       {% if b.created_at %}
       <div class="biz-card-foot">
-        Added {{ b.created_at.strftime('%b %d, %Y') }}
+        Added {{ b.created_at.strftime('%b %d, %Y') }}     <!-- Date Created-->
       </div>
       {% endif %}
     </div>
