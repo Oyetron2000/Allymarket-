@@ -10,7 +10,7 @@
     <h1><strong><span class="highlight"> Sign Up</span></strong></h1>
     <h1><strong>Select Your Account Type:</strong></h1>
     <hr>
-<div class="user-type-selection">
+<div class="user-type-selection"> <!-- User Type Selection -->
   <input type="radio" id="customer" name="UserType" value="Customer" required>
   <label for="customer" class="user-type-btn">
     <img src="{{ url_for('static', filename='assets/customer.jpg') }}" alt="Customer">
@@ -31,7 +31,7 @@
   <input type="text" name="FirstName" placeholder="Enter First Name" required>
   <label for="password">Password</label>
   <input type="password" name="password1" placeholder="Enter Password" required>
-  <input type="password" name="password2" placeholder="Confirm Password" required>
+  <input type="password" name="password2" placeholder="Confirm Password" required> <!-- Confirm Password field requires both paswords to be the same-->
   <button type= "submit" class="btn btn-primary">Sign up!</button>
 </form>
 
