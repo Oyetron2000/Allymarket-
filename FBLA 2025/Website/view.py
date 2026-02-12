@@ -132,7 +132,7 @@ def add_review(biz_id):
     business = Business.query.get_or_404(biz_id)
 
     # 🚫 Business owners cannot review their own business
-    if current_user.id == business.owner_id:
+    if current_user.id == business.user_id:
         flash("You cannot review your own business.", "danger")
         return redirect(url_for("views.business_page", biz_id=biz_id))
 
@@ -166,3 +166,4 @@ def business_page(biz_id):
     reviews = Review.query.filter_by(business_id=biz_id).order_by(Review.created_at.desc()).all()
 
     return render_template("business_page.html", business=business, user=current_user, reviews=reviews)
+
