@@ -66,10 +66,10 @@ nav {
 
 /* override bootstrap bg-light */
 body .bg-light, .container .bg-light {
-  background-color: var(--light) !important /*ts was so annoying*/;
+  background-color: var(--light) !important;
 }
 
-nav .left a {
+nav .left a { /* logo */
   display: flex;
   justify-content: space-between;
   color: var(--primary-color);
@@ -82,7 +82,7 @@ nav .right {
   align-items: center;
 }
 
-nav .right a {
+nav .right a { /* nav links */
   color: var(--text-color);
   font-size: 24px;
   font-weight: 500;
@@ -314,7 +314,7 @@ footer {
 .biz-grid {
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 /* base business card */
